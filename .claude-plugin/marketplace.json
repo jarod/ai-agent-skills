@@ -1,0 +1,22 @@
+{
+  "name": "ai-agent-skills",
+  "owner": {
+    "name": "Jarod",
+    "email": ""
+  },
+  "metadata": {
+    "description": "Collection of AI agent skills for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "rust-skills",
+      "description": "Collection of Rust development skills including ripdoc documentation lookup",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/ripdoc-lookup"
+      ]
+    }
+  ]
+}
