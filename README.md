@@ -1,6 +1,6 @@
 # AI Agent Skills
 
-A collection of AI agent skills for Claude Code.
+A collection of AI [agent skills](https://agentskills.io/) for Claude Code.
 
 ## Skills
 
@@ -30,4 +30,4 @@ ai-agent-skills/
 
 ## License
 
-MIT
+Apache License 2.0 - see [LICENSE](LICENSE) for details.

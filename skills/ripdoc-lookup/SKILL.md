@@ -1,6 +1,8 @@
 ---
 name: ripdoc-lookup
 description: Query and explore Rust crate APIs and documentation using the ripdoc CLI tool. Use this skill when users request information about Rust crate public APIs, want to search Rust documentation, need to understand crate structures, or ask to lookup specific types/functions/modules in Rust crates from crates.io or local filesystem. This skill is essential for Rust development tasks requiring quick access to API documentation without opening a browser.
+metadata:
+  version: "1.1"
 ---
 
 # Ripdoc Lookup
@@ -43,11 +45,11 @@ The ripdoc command must be pre-installed and available in the current shell envi
 
 ### 1. Print Crate API Documentation
 
-Use `ripdoc print` to display the public API and documentation of a crate. The output is in Markdown format by default, which is token-efficient and immediately usable.
+Use `ripdoc print` to display the public API and documentation of a crate. The output is in Markdown format by default, which is token-efficient and immediately usable. Always use `--no-color` flag to disable ANSI colors for cleaner output.
 
 **Basic syntax:**
 ```sh
-ripdoc print [TARGET] [ITEM]
+ripdoc print [TARGET] [ITEM] --no-color
 ```
 
 **Target specifications:**
@@ -84,9 +86,6 @@ ripdoc print tokio --format markdown
 
 # Raw Rust code skeleton
 ripdoc print tokio --format rust
-
-# Raw JSON for tooling/jq
-ripdoc raw tokio
 ```
 
 **Additional options:**
@@ -120,9 +119,6 @@ ripdoc print serde --verbose
 
 # Disable source location labels
 ripdoc print serde --no-source-labels
-
-# Disable ANSI colors
-ripdoc print serde --no-color
 ```
 
 ### 2. Search Within Crate Documentation
@@ -226,71 +222,21 @@ ripdoc readme serde@1.0.0
 
 ### 6. Skelebuild - Incremental Context Building
 
-`skelebuild` incrementally builds a Markdown "source map" by mixing API skeletons, selective implementation spans, and your own commentary. State is persisted at `~/.local/state/ripdoc/skelebuild.json`.
+Use `ripdoc skelebuild` when you need to build incremental context for complex code understanding tasks. It creates a stateful Markdown "source map" by mixing API skeletons, implementation spans, raw source snippets, and commentary.
 
-**Subcommands:**
-- `add` - Add a target to the skeleton
-- `add-raw` - Add an arbitrary raw source snippet by file and line range
-- `add-file` - Add an entire file from disk as raw source
-- `add-changed` - Add changed-context from a git diff
-- `update` - Update an existing target entry
-- `inject` - Inject manual commentary
-- `remove` - Remove a target from the skeleton
-- `reset` - Clear all targets and reset state
-- `status` - Show current targets and output path
-- `preview` - Preview the rebuilt output to stdout
-- `rebuild` - Rebuild the output file without adding anything
+For detailed usage, run: `ripdoc skelebuild --help`
 
-**Workflow example:**
-```sh
-# Start fresh
-ripdoc skelebuild reset --output context.md
+### 7. Raw JSON Output
 
-# Add items (includes implementation spans by default)
-ripdoc skelebuild add bat::config::Config
+Use `ripdoc raw` when you need the raw rustdoc JSON output for custom tooling or processing with jq.
 
-# Add multiple items at once
-ripdoc skelebuild add ./my-crate \
-  crate::editor::Editor::render \
-  crate::editor::Editor::ensure_cursor_visible
+For detailed usage, run: `ripdoc raw --help`
 
-# Add raw source directly from disk
-ripdoc skelebuild add-raw ./path/to/file.rs:336:364
-ripdoc skelebuild add-file ./path/to/file.rs
+### 8. AI Agents Guide
 
-# Add context from git diffs
-ripdoc skelebuild add-changed --git HEAD^..HEAD --only-rust
-ripdoc skelebuild add-changed --staged --only-rust
+Use `ripdoc agents` to get a dense usage guide optimized for AI agents. Run this command when you need comprehensive ripdoc usage information.
 
-# Insert notes
-ripdoc skelebuild inject '## Notes\nWhy this matters...' --after-target bat::config::Config
-
-# Inject from stdin
-ripdoc skelebuild inject --after-target bat::config::Config <<'EOF'
-## Notes
-My commentary here
-EOF
-
-# Other commands
-ripdoc skelebuild preview      # print output without writing file
-ripdoc skelebuild status       # show entries and indices
-ripdoc skelebuild update bat::config::Config --implementation
-ripdoc skelebuild remove bat::assets::get_acknowledgements
-```
-
-**Skelebuild tips:**
-- **Defaults**: `add` includes implementation spans, resolves private items, and uses plain (flat) output.
-- **Opt-out flags**: `--no-implementation` (signatures only), `--no-private` (public API only).
-- **Injection placement**: Prefer `--after-target <spec>` / `--before-target <spec>` over `--at <index>`.
-- **Auto-stdin**: `inject` automatically reads from stdin when piping or using heredocs.
-- **Impl-block targeting**: Target an entire impl with `Type::Trait` (e.g. `Editor::EditorOps`).
-
-## AI Agents Guide
-
-Run `ripdoc agents` for a dense usage guide optimized for AI agents. Additional topic guides:
-
-- `ripdoc agents print` - Detailed print command usage
-- `ripdoc agents skelebuild` - Stateful context building
+For detailed usage, run: `ripdoc agents --help`
 
 ## Workflow Patterns
 
@@ -382,32 +328,9 @@ When working with local Rust projects:
 
 ### Pattern 5: Building Incremental Context
 
-When building context for complex code understanding:
+When building context for complex code understanding, use `ripdoc skelebuild` to incrementally build a Markdown context file with API skeletons, implementation spans, and commentary.
 
-1. **Initialize output file:**
-   ```sh
-   ripdoc skelebuild reset --output context.md
-   ```
-
-2. **Add core types and functions:**
-   ```sh
-   ripdoc skelebuild add ./my-crate crate::core::Config crate::core::App
-   ```
-
-3. **Add related implementations:**
-   ```sh
-   ripdoc skelebuild add ./my-crate crate::handlers::process
-   ```
-
-4. **Add raw source for tests or non-rustdoc code:**
-   ```sh
-   ripdoc skelebuild add-raw ./tests/integration.rs:10:50
-   ```
-
-5. **Preview or read the built context:**
-   ```sh
-   ripdoc skelebuild preview
-   ```
+Run `ripdoc skelebuild --help` for detailed usage instructions.
 
 ## Output Interpretation
 
@@ -510,19 +433,6 @@ Show automatically implemented traits:
 ripdoc print tokio --auto-impls
 ```
 
-### Caching
-
-Ripdoc automatically caches rustdoc JSON on disk for faster subsequent queries. Override the cache location:
-
-```sh
-export RIPDOC_CACHE_DIR=/custom/cache/path
-ripdoc print tokio
-```
-
-### Character Highlighting
-
-When using `--search`, matching characters are highlighted in the output to quickly identify relevant portions.
-
 ## Tips for Effective Usage
 
 1. **Start broad, then narrow:** Begin with `ripdoc list` or `ripdoc print` without search, then use `--search` to drill down.
@@ -575,9 +485,7 @@ ripdoc list [crate] --search [function]
 
 ### "Build context for understanding [feature]"
 ```sh
-ripdoc skelebuild reset --output feature_context.md
-ripdoc skelebuild add [crate] [crate]::[relevant_types]
-ripdoc skelebuild preview
+ripdoc skelebuild --help  # See available subcommands
 ```
 
 ## Troubleshooting
@@ -659,10 +567,11 @@ Avoid using shell utilities like `head`, `tail` in command pipelines. Let ripdoc
 
 ## Additional Resources
 
-For the most up-to-date and detailed usage information, use the built-in AI agents guide:
+For the most up-to-date and detailed usage information, use the built-in help commands:
 
 ```sh
-ripdoc agents           # Dense usage overview
-ripdoc agents print     # Detailed print command usage
-ripdoc agents skelebuild # Stateful context building guide
+ripdoc --help             # General help
+ripdoc agents             # Dense usage overview for AI agents
+ripdoc skelebuild --help  # Incremental context building
+ripdoc raw --help         # Raw JSON output
 ```
