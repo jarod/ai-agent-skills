@@ -1,0 +1,3 @@
+[submodule "skills/gva-doc/references/gin-vue-admin.com"]
+	path = skills/gva-doc/references/gin-vue-admin.com
+	url = https://github.com/flipped-aurora/gin-vue-admin.com.git

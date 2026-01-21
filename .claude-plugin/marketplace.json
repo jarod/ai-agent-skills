@@ -6,7 +6,7 @@
   },
   "metadata": {
     "description": "Collection of AI agent skills for Claude Code",
-    "version": "1.0.0"
+    "version": "1.1.0"
   },
   "plugins": [
     {
@@ -15,7 +15,17 @@
       "source": "./",
       "strict": false,
       "skills": [
-        "./skills/ripdoc-lookup"
+        "./skills/ripdoc-lookup",
+        "./skills/rust-ddd"
+      ]
+    },
+    {
+      "name": "go-skills",
+      "description": "Collection of Go development skills including Gin-Vue-Admin documentation reference",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/gva-doc"
       ]
     }
   ]
