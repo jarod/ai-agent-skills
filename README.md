@@ -22,8 +22,8 @@ Add the marketplace and install plugins:
 claude plugin marketplace add jarod/ai-agent-skills
 
 # Install plugins
-claude plugin install rust-skills
-claude plugin install go-skills
+claude plugin install rust-skills@ai-agent-skills
+claude plugin install go-skills@ai-agent-skills
 ```
 
 ## Update
@@ -31,10 +31,7 @@ claude plugin install go-skills
 Update plugins to the latest version:
 
 ```bash
-claude plugin marketplace update jarod/ai-agent-skills
-
-claude plugin update rust-skills
-claude plugin update go-skills
+claude plugin marketplace update ai-agent-skills
 ```
 
 ## Structure
@@ -43,7 +40,11 @@ claude plugin update go-skills
 ai-agent-skills/
 ├── .claude-plugin/
 │   └── marketplace.json     # Marketplace configuration
-├── skills/	# Skill implementation
+├── rust-skills/             # Rust development skills
+│   ├── ripdoc-lookup/
+│   └── rust-ddd/
+├── go-skills/               # Go development skills
+│   └── gva-doc/
 └── README.md
 ```
 
